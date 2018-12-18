@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     val http: Http = ignite()
     http.staticFiles.location("/public")
 
-    http.get("/") {
+    http.get("/calc") {
         val m = queryMap().get("m").integerValue() ?: 0
         val n = queryMap().get("n").integerValue() ?: 0
         val alg = queryMap().get("alg").integerValue() ?: 0
@@ -37,12 +37,12 @@ fun main(args: Array<String>) {
                                 +"Середнє число заявок в черзі"
                             }
                             th {
-                                +"Середнє час очікування в черзі"
+                                +"Середній час очікування в черзі"
                             }
                             th {
                                 +"Середня кількість заянятих каналів"
                             }
-                            p.mapIndexed { index, p ->
+                            p.mapIndexed { index, _ ->
                                 th {
                                     +"P"
                                     sub {
