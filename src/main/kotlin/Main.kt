@@ -1,3 +1,4 @@
+
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import spark.kotlin.Http
@@ -6,6 +7,21 @@ import spark.kotlin.ignite
 fun main(args: Array<String>) {
     val http: Http = ignite()
     http.staticFiles.location("/public")
+
+    http.get("/random") {
+        val m = queryMap().get("m").integerValue() ?: 0
+        val n0 = queryMap().get("n0").integerValue() ?: 0
+        val lambda = queryMap().get("lambda").integerValue() ?: 0
+        val n = queryMap().get("n").integerValue() ?: 0
+        val values = generateSequence(n0) { (it * lambda).rem(m) }
+                .take(n)
+                .toList()
+        createHTML().html {
+            body {
+                +values.joinToString(", ")
+            }
+        }
+    }
 
     http.get("/calc") {
         val m = queryMap().get("m").integerValue() ?: 0

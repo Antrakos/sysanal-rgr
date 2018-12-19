@@ -3,6 +3,25 @@
     <meta charset="utf-8"/>
 </head>
 <body>
+<h2>Генератор ПВЧ</h2>
+<form action="/random" method="get" target="random_frame">
+    <label>
+        n<sub>0</sub>: <input type="number" name="n0" value="0"/>
+    </label>
+    <label>
+        m: <input type="number" name="m" value="0"/>
+    </label>
+    <label>
+        &lambda;: <input type="number" name="lambda" value="0"/>
+    </label>
+    <label>
+        К-сть чисел: <input type="number" name="n" value="0"/>
+    </label>
+    <input type="submit" value="Порахувати"/>
+</form>
+<iframe name="random_frame" src="empty.html" width="100%" height="100px" frameborder="0"></iframe>
+<hr/>
+<h2>СМО</h2>
 <form action="/calc" method="get" target="my_frame">
     <label>
         n: <input type="number" name="n" value="0"/>
