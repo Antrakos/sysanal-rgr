@@ -41,9 +41,9 @@ fun main(args: Array<String>) {
             }
             body {
                 (0..m + n).forEach { num ->
-                    if (num < n + m) printArrow(left = 11 + (80) * (num + 1) + 90 * num, top = 0, text = format(algorithm.generateLambda(num), "λ"))
-                    if (num < n + m) printBackwardArrow(left = 11 + (80) * (num + 1) + 90 * num, top = 40, text = format(algorithm.generateMu(num), "µ") + format(algorithm.generateNu(num), "ν", prefix = " + "))
-                    printBlock(left = 10 + (170 * num), top = 20, text = num.toString())
+                    if (num < n + m) printArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 0, text = format(algorithm.generateLambda(num), "λ"))
+                    if (num < n + m) printBackwardArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 40, text = format(algorithm.generateMu(num), "µ") + format(algorithm.generateNu(num), "ν", prefix = " + "))
+                    printBlock(left = 10 + (190 * num), top = 20, text = num.toString())
                 }
                 table {
                     style = "margin-top: 150px; position: absolute; padding: 5px;"
@@ -113,7 +113,7 @@ fun FlowContent.printBlock(left: Int, top: Int, text: String, width: Int = 80, h
 
 fun FlowContent.printArrow(left: Int, top: Int, text: String? = null) {
     div("arrow") {
-        style = "margin-left: $left; margin-top: $top; position: absolute; font-size: 17px; text-align: center;"
+        style = "margin-left: $left; margin-top: $top; position: absolute; font-size: 21px; text-align: center;"
         if (text != null)
             +"$text"
         div("line")
@@ -123,7 +123,7 @@ fun FlowContent.printArrow(left: Int, top: Int, text: String? = null) {
 
 fun FlowContent.printBackwardArrow(left: Int, top: Int, text: String? = null) {
     div("arrow") {
-        style = "margin-left: $left; margin-top: $top; position: absolute; font-size: 17px; text-align: center;"
+        style = "margin-left: $left; margin-top: $top; position: absolute; font-size: 21px; text-align: center;"
         div("backward-line")
         div("backward-point")
         if (text != null)
