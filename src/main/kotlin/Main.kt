@@ -35,14 +35,18 @@ fun main(args: Array<String>) {
         val algorithm = findAlgorithm(alg)(m, n)
         val p = algorithm.calculateP(inputs)
         val (queueSize, queueTime, workingChannels) = algorithm.calculateAverages(inputs, p)
+        val size = if (algorithm.hasQueue) n + m else n
         createHTML().html {
             head {
                 link("css/main.css", rel = "stylesheet")
             }
             body {
-                (0..m + n).forEach { num ->
-                    if (num < n + m) printArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 0, text = format(algorithm.generateLambda(num), "λ"))
-                    if (num < n + m) printBackwardArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 40, text = format(algorithm.generateMu(num), "µ") + format(algorithm.generateNu(num), "ν", prefix = " + "))
+                h2 {
+                    +algorithm.name
+                }
+                (0..size).forEach { num ->
+                    if (num < size) printArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 0, text = format(algorithm.generateLambda(num), "λ"))
+                    if (num < size) printBackwardArrow(left = 11 + (80) * (num + 1) + 110 * num, top = 40, text = format(algorithm.generateMu(num), "µ") + format(algorithm.generateNu(num), "ν", prefix = " + "))
                     printBlock(left = 10 + (190 * num), top = 20, text = num.toString())
                 }
                 table {
@@ -71,10 +75,10 @@ fun main(args: Array<String>) {
                     tbody {
                         tr {
                             td {
-                                +String.format("%.2f", queueSize)
+                                + (queueSize?.let { String.format("%.2f", queueSize) } ?: "-")
                             }
                             td {
-                                +String.format("%.2f", queueTime)
+                                +(queueTime?.let { String.format("%.2f", queueTime) } ?: "-")
                             }
                             td {
                                 +String.format("%.2f", workingChannels)

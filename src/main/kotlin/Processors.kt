@@ -7,8 +7,8 @@ data class Inputs(
 )
 
 data class Averages(
-        val queueSize: Double,
-        val queueTime: Double,
+        val queueSize: Double?,
+        val queueTime: Double?,
         val workingChannels: Double
 )
 
@@ -18,6 +18,7 @@ interface Algorithm {
     val m: Int
     val n: Int
     val name: String
+    val hasQueue: Boolean
     fun generateLambda(num: Int): Int
     fun generateMu(num: Int): Int
     fun generateNu(num: Int): Int
@@ -27,6 +28,7 @@ interface Algorithm {
 
 fun findAlgorithm(id: Int): (Int, Int) -> Algorithm {
     return when (id) {
+        1 -> ::MultichannelWithDecline
         3 -> ::MultichannelWithWait
         7 -> ::MultichannelWithLimitedQueueTime
         else -> throw IllegalArgumentException("Unknown algorithm")
@@ -53,10 +55,37 @@ class MultichannelWithWait(override val m: Int, override val n: Int) : Algorithm
 
     override val name: String
         get() = "Багатоканальна з очікуванням"
+    override val hasQueue: Boolean
+        get() = true
 
     override fun generateLambda(num: Int) = 1
 
     override fun generateMu(num: Int) = if (num < n) num + 1 else n
+
+    override fun generateNu(num: Int) = 0
+}
+class MultichannelWithDecline(override val m: Int, override val n: Int) : Algorithm {
+    override fun calculateP(data: Inputs): List<Double> {
+        val ro = data.lambda.toDouble() / data.mu
+        val p0 = 0.rangeTo(n).map { ro.pow(it) / factorial(it) }.sum().pow(-1)
+        return listOf(p0).plus(
+                1.rangeTo(n).map { p0 * ro.pow(it) / factorial(it) }
+        )
+    }
+
+    override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
+        val ro = data.lambda.toDouble() / data.mu
+        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()))
+    }
+
+    override val name: String
+        get() = "Багатоканальна з відмовами"
+    override val hasQueue: Boolean
+        get() = false
+
+    override fun generateLambda(num: Int) = 1
+
+    override fun generateMu(num: Int) = num + 1
 
     override fun generateNu(num: Int) = 0
 }
@@ -82,6 +111,8 @@ class MultichannelWithLimitedQueueTime(override val m: Int, override val n: Int)
 
     override val name: String
         get() = "Багатоканальна з обмеженим часом перебування в черзі"
+    override val hasQueue: Boolean
+        get() = true
 
     override fun generateLambda(num: Int) = 1
 
