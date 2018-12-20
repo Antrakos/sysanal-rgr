@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
         )
         val algorithm = findAlgorithm(alg)(m, n)
         val p = algorithm.calculateP(inputs)
-        val (queueSize, queueTime, workingChannels, A, q) = algorithm.calculateAverages(inputs, p)
+        val (queueSize, queueTime, workingChannels, A, q, w) = algorithm.calculateAverages(inputs, p)
         val size = if (algorithm.hasQueue) n + m else n
         createHTML().html {
             head {
@@ -67,6 +67,9 @@ fun main(args: Array<String>) {
                             th {
                                 +"Абсолютна пропускна здатність"
                             }
+                            th {
+                                +"Середня кількість несправностей"
+                            }
                             p.mapIndexed { index, _ ->
                                 th {
                                     +"P"
@@ -89,10 +92,13 @@ fun main(args: Array<String>) {
                                 +String.format("%.2f", workingChannels)
                             }
                             td {
-                                +String.format("%.2f", q)
+                                +(q?.let { String.format("%.2f", q) } ?: "-")
                             }
                             td {
                                 +String.format("%.2f", A)
+                            }
+                            td {
+                                +(w?.let { String.format("%.2f", w) } ?: "-")
                             }
                             p.map {
                                 td {

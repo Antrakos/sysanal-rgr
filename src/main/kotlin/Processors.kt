@@ -7,11 +7,12 @@ data class Inputs(
 )
 
 data class Averages(
-        val queueSize: Double?,
-        val queueTime: Double?,
+        val queueSize: Double? = null,
+        val queueTime: Double? = null,
         val workingChannels: Double,
         val A: Double,
-        val q: Double
+        val q: Double? = null,
+        val w: Double? = null
 )
 
 fun factorial(num: Int) = if (num == 0) 1 else (1..num).reduce(Int::times)
@@ -33,6 +34,7 @@ fun findAlgorithm(id: Int): (Int, Int) -> Algorithm {
         1 -> ::MultichannelWithDecline
         3 -> ::MultichannelWithWait
         7 -> ::MultichannelWithLimitedQueueTime
+        11 -> ::MultichannelClosed
         else -> throw IllegalArgumentException("Unknown algorithm")
     }
 }
@@ -80,7 +82,7 @@ class MultichannelWithDecline(override val m: Int, override val n: Int) : Algori
 
     override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
         val ro = data.lambda.toDouble() / data.mu
-        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()), q = 1 - p.last(), A = data.lambda * (1 - p.last()))
+        return Averages(workingChannels = ro * (1 - p.last()), q = 1 - p.last(), A = data.lambda * (1 - p.last()))
     }
 
     override val name: String
@@ -127,4 +129,40 @@ class MultichannelWithLimitedQueueTime(override val m: Int, override val n: Int)
     }
 
     override fun generateNu(num: Int) = if (num < n) 0 else num - n + 1
+}
+
+class MultichannelClosed(override val m: Int, override val n: Int) : Algorithm {
+    override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
+        val workingChannels = p.asSequence().take(m - 1).mapIndexed { index, pn -> index * pn }.sum() + m * p.asSequence().drop(m - 1).sum()
+        return Averages(workingChannels = workingChannels, A = workingChannels * data.mu, w = n - workingChannels * data.mu / data.lambda)
+    }
+
+    override fun calculateP(data: Inputs): List<Double> {
+        val ro = data.lambda.toDouble() / data.mu
+        val p0 = (
+                0.rangeTo(m).map { ro.pow(it) * fact(it) / factorial(it) }.sum()
+                        + (m + 1).rangeTo(n).map { ro.pow(it) * fact(it) / (factorial(it) * m.toDouble().pow(it - m)) }.sum()
+                ).pow(-1)
+        return listOf(p0).plus(
+                1.rangeTo(m).map { p0 * ro.pow(it) * fact(it) / factorial(it) }
+        ).plus(
+                (m + 1).rangeTo(n).map { p0 * ro.pow(it) * fact(it) / (factorial(it) * m.toDouble().pow(it - m)) }
+        )
+    }
+
+    private fun fact(num: Int) = if (num == 0) 1 else n.downTo(n - num).reduce(Int::times)
+
+    override val name: String
+        get() = "Багатоканальна замкнута"
+    override val hasQueue: Boolean
+        get() = false
+
+    override fun generateLambda(num: Int) = n - num
+
+    override fun generateMu(num: Int) = when {
+        num >= m -> m
+        else -> num + 1
+    }
+
+    override fun generateNu(num: Int) = 0
 }
