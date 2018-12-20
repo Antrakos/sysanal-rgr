@@ -1,4 +1,3 @@
-
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import spark.kotlin.Http
@@ -62,10 +61,10 @@ fun main(args: Array<String>) {
                             th {
                                 +"Середня кількість заянятих каналів"
                             }
-                             th {
+                            th {
                                 +"Відносна пропускна здатність"
                             }
-                             th {
+                            th {
                                 +"Абсолютна пропускна здатність"
                             }
                             p.mapIndexed { index, _ ->
@@ -81,7 +80,7 @@ fun main(args: Array<String>) {
                     tbody {
                         tr {
                             td {
-                                + (queueSize?.let { String.format("%.2f", queueSize) } ?: "-")
+                                +(queueSize?.let { String.format("%.2f", queueSize) } ?: "-")
                             }
                             td {
                                 +(queueTime?.let { String.format("%.2f", queueTime) } ?: "-")

@@ -24,6 +24,16 @@
 <h2>СМО</h2>
 <form action="/calc" method="get" target="my_frame">
     <label>
+        <select name="alg" hidden>
+            Тип:
+            <option value="1">Багатоканальна з відмовами</option>
+            <option value="3">Багатоканальна з очікуванням</option>
+            <option value="7" selected>Багатоканальна з обмеженим часом перебування в черзі</option>
+        </select>
+        <br/>
+        <br/>
+    </label>
+    <label>
         n: <input type="number" name="n" value="0"/>
     </label>
     <label>
@@ -38,7 +48,6 @@
     <label>
         &nu;: <input type="number" name="nu" value="0"/>
     </label>
-    <input type="hidden" name="alg" value="1"/>
     <input type="submit" value="Порахувати"/>
 </form>
 <iframe name="my_frame" src="empty.html" width="100%" height="100%" frameborder="0"></iframe>

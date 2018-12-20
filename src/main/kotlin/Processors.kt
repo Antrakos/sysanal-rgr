@@ -68,6 +68,7 @@ class MultichannelWithWait(override val m: Int, override val n: Int) : Algorithm
 
     override fun generateNu(num: Int) = 0
 }
+
 class MultichannelWithDecline(override val m: Int, override val n: Int) : Algorithm {
     override fun calculateP(data: Inputs): List<Double> {
         val ro = data.lambda.toDouble() / data.mu
@@ -79,7 +80,7 @@ class MultichannelWithDecline(override val m: Int, override val n: Int) : Algori
 
     override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
         val ro = data.lambda.toDouble() / data.mu
-        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()), q= 1 - p.last(), A=data.lambda*(1 - p.last()))
+        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()), q = 1 - p.last(), A = data.lambda * (1 - p.last()))
     }
 
     override val name: String
