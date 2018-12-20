@@ -27,13 +27,13 @@ interface Algorithm {
 
 fun findAlgorithm(id: Int): (Int, Int) -> Algorithm {
     return when (id) {
-        1 -> ::MultichannelWithDecline
+        3 -> ::MultichannelWithWait
         7 -> ::MultichannelWithLimitedQueueTime
         else -> throw IllegalArgumentException("Unknown algorithm")
     }
 }
 
-class MultichannelWithDecline(override val m: Int, override val n: Int) : Algorithm {
+class MultichannelWithWait(override val m: Int, override val n: Int) : Algorithm {
     override fun calculateP(data: Inputs): List<Double> {
         val ro = data.lambda.toDouble() / data.mu
         val p0 = (0.rangeTo(n).map { ro.pow(it) / factorial(it) }.sum() + (ro.pow(n) / factorial(n)) * ((ro / n - (ro / n).pow(m + 1)) / (1 - (ro / n)))).pow(-1)
@@ -52,7 +52,7 @@ class MultichannelWithDecline(override val m: Int, override val n: Int) : Algori
     }
 
     override val name: String
-        get() = "Багатоканальна з відмовами"
+        get() = "Багатоканальна з очікуванням"
 
     override fun generateLambda(num: Int) = 1
 
