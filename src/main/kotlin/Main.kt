@@ -52,23 +52,31 @@ fun main(args: Array<String>) {
                     style = "margin-top: 150px; position: absolute; padding: 5px;"
                     thead {
                         tr {
-                            th {
-                                +"Середнє число заявок в черзі"
+                            if (queueSize != null) {
+                                th {
+                                    +"Середнє число заявок в черзі"
+                                }
                             }
-                            th {
-                                +"Середній час очікування в черзі"
+                            if (queueTime != null) {
+                                th {
+                                    +"Середній час очікування в черзі"
+                                }
                             }
                             th {
                                 +"Середня кількість заянятих каналів"
                             }
-                            th {
-                                +"Відносна пропускна здатність"
+                            if (q != null) {
+                                th {
+                                    +"Відносна пропускна здатність"
+                                }
                             }
                             th {
                                 +"Абсолютна пропускна здатність"
                             }
-                            th {
-                                +"Середня кількість несправностей"
+                            if (w != null) {
+                                th {
+                                    +"Середня кількість несправностей"
+                                }
                             }
                             p.mapIndexed { index, _ ->
                                 th {
@@ -82,23 +90,31 @@ fun main(args: Array<String>) {
                     }
                     tbody {
                         tr {
-                            td {
-                                +(queueSize?.let { String.format("%.2f", queueSize) } ?: "-")
+                            if (queueSize != null) {
+                                td {
+                                    +String.format("%.2f", queueSize)
+                                }
                             }
-                            td {
-                                +(queueTime?.let { String.format("%.2f", queueTime) } ?: "-")
+                            if (queueTime != null) {
+                                td {
+                                    +String.format("%.2f", queueTime)
+                                }
                             }
                             td {
                                 +String.format("%.2f", workingChannels)
                             }
-                            td {
-                                +(q?.let { String.format("%.2f", q) } ?: "-")
+                            if (q != null) {
+                                td {
+                                    +String.format("%.2f", q)
+                                }
                             }
                             td {
                                 +String.format("%.2f", A)
                             }
-                            td {
-                                +(w?.let { String.format("%.2f", w) } ?: "-")
+                            if (w != null) {
+                                td {
+                                    +String.format("%.2f", w)
+                                }
                             }
                             p.map {
                                 td {
