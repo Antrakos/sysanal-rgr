@@ -9,7 +9,9 @@ data class Inputs(
 data class Averages(
         val queueSize: Double?,
         val queueTime: Double?,
-        val workingChannels: Double
+        val workingChannels: Double,
+        val A: Double,
+        val q: Double
 )
 
 fun factorial(num: Int) = if (num == 0) 1 else (1..num).reduce(Int::times)
@@ -50,7 +52,9 @@ class MultichannelWithWait(override val m: Int, override val n: Int) : Algorithm
         val ro = data.lambda.toDouble() / data.mu
         val workingChannels = ro * (1 - p[0] * ro.pow(n + m) / (n.toDouble().pow(m) * factorial(n)))
         val queueSize = (p[0] * ro.pow(n + m) / (n * factorial(n))) * 1.rangeTo(m).map { it * (ro / n).pow(it - 1) }.sum()
-        return Averages(queueSize = queueSize, queueTime = queueSize / data.lambda, workingChannels = workingChannels)
+        val q = (1 - p[0] * ro.pow(n + m) / (n.toDouble().pow(m) * factorial(n)))
+        val A = data.lambda * (1 - p[0] * ro.pow(n + m) / (n.toDouble().pow(m) * factorial(n)))
+        return Averages(queueSize = queueSize, queueTime = queueSize / data.lambda, workingChannels = workingChannels, q = q, A = A)
     }
 
     override val name: String
@@ -75,7 +79,7 @@ class MultichannelWithDecline(override val m: Int, override val n: Int) : Algori
 
     override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
         val ro = data.lambda.toDouble() / data.mu
-        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()))
+        return Averages(queueSize = null, queueTime = null, workingChannels = ro * (1 - p.last()), q= 1 - p.last(), A=data.lambda*(1 - p.last()))
     }
 
     override val name: String
@@ -94,7 +98,7 @@ class MultichannelWithDecline(override val m: Int, override val n: Int) : Algori
 class MultichannelWithLimitedQueueTime(override val m: Int, override val n: Int) : Algorithm {
     override fun calculateAverages(data: Inputs, p: List<Double>): Averages {
         val queueSize = p.asSequence().drop(n + 1).mapIndexed { index, p -> (index + 1) * p }.sum()
-        return Averages(queueTime = data.nu.toDouble().pow(-1), queueSize = queueSize, workingChannels = (data.lambda - data.nu * queueSize) / data.mu)
+        return Averages(queueTime = data.nu.toDouble().pow(-1), queueSize = queueSize, workingChannels = (data.lambda - data.nu * queueSize) / data.mu, q = 1 - data.nu * queueSize / data.lambda, A = data.lambda - data.nu * queueSize)
     }
 
     override fun calculateP(data: Inputs): List<Double> {
